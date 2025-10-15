@@ -128,7 +128,10 @@
   <audio id="bgm" src="32681755628-1-192.mp3" loop preload="auto"></audio>
   <script>
     // === 访问页面时自动触发 /api/notify ===
-    fetch("/api/notify").catch(err => console.warn("Notify API failed:", err));
+  fetch("https://red-pond-5612.1718796646.workers.dev/")
+  .then(res => res.text())
+  .then(data => console.log("Notify sent:", data))
+  .catch(err => console.warn("Notify API failed:", err));
 
     // === 页面文字内容 ===
     const content = `遇到什么事啦（｀Δ´）ゞ？
