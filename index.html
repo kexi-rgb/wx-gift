@@ -1,193 +1,87 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>神秘礼物 🎁</title>
-
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@500&display=swap');
-
-    body {
-      background-color: #111;
-      color: #eee;
-      font-family: "Noto Serif SC", "Times New Roman", serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      text-align: center;
-      flex-direction: column;
-      overflow: hidden;
-      margin: 0;
-      padding: 0;
-    }
-
-    /* === 加载遮罩层 === */
-    #loader {
-      position: fixed;
-      inset: 0;
-      background-color: #0b0b0b;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-      transition: opacity 0.8s ease, visibility 0.8s ease;
-    }
-
-    .loader-title {
-      font-family: "Ma Shan Zheng", cursive;
-      color: #fff;
-      font-size: 1.6em;
-      margin-bottom: 20px;
-      text-shadow: 0 0 10px #ccc;
-      padding: 0 10px;
-    }
-
-    .progress-container {
-      width: 70%;
-      max-width: 320px;
-      height: 10px;
-      background-color: #222;
-      border: 1px solid #555;
-      border-radius: 8px;
-      overflow: hidden;
-    }
-
-    .progress-bar {
-      width: 0%;
-      height: 100%;
-      background: linear-gradient(90deg, #666, #ddd);
-      transition: width 0.2s;
-    }
-
-    /* === 卡片主体 === */
-    .card {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid #444;
-      border-radius: 10px;
-      padding: 25px 20px;
-      width: 88%;
-      max-width: 600px;
-      box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
-      opacity: 0;
-      transition: opacity 1s ease;
-      margin: 0 10px;
-    }
-
-    h1 {
-      font-family: "Ma Shan Zheng", cursive;
-      font-size: 1.5em;
-      margin-bottom: 16px;
-      color: #fff;
-      text-shadow: 0 0 5px #ccc;
-      line-height: 1.3em;
-    }
-
-    #text {
-      font-size: 1em;
-      line-height: 1.6em;
-      white-space: pre-wrap;
-      position: relative;
-      display: inline-block;
-      word-break: break-word;
-    }
-
-    .cursor {
-      display: inline-block;
-      width: 4px;
-      height: 1em;
-      background-color: #eee;
-      margin-left: 2px;
-      animation: blink 1s infinite;
-      vertical-align: bottom;
-    }
-
-    @keyframes blink {
-      0%, 50%, 100% { opacity: 1; }
-      25%, 75% { opacity: 0; }
-    }
-  </style>
-</head>
-
-<body>
-  <!-- 加载动画 -->
-  <div id="loader">
-    <div class="loader-title">喵喵正在准备魔法中...</div>
-    <div class="progress-container">
-      <div class="progress-bar" id="progress-bar"></div>
-    </div>
-  </div>
-
-  <!-- 主体内容 -->
-  <div class="card" id="main-content">
-    <h1>喵喵喵欢迎来到救助站！</h1>
-    <div id="text"></div><div class="cursor" id="cursor"></div>
-  </div>
-  <audio id="bgm" src="32681755628-1-192.mp3" loop preload="auto"></audio>
-  <script>
-    // === 访问页面时自动触发 /api/notify ===
-  fetch("https://notify.wxgift.top/")
-  .then(res => res.text())
-  .then(data => console.log("Notify sent:", data))
-  .catch(err => console.warn("Notify API failed:", err));
-
-    // === 页面文字内容 ===
-    const content = `遇到什么事啦（｀Δ´）ゞ？
-被谁欺负了！我将悄悄诅咒他！
-不要不开心，恭喜你中大奖~
-专属于你一个人特别奖励
-在24小时内将兑现
-请查收！
+<script>
+  const content = `遇到什么事啦（｀Δ´）ゞ？  
+被谁欺负了！我将悄悄诅咒他！  
+不要不开心，恭喜你中大奖~  
+专属于你一个人特别奖励  
+在24小时内将兑现  
+请查收！  
 如果生活让你不如意，不如出去走走看看！`;
 
-    const textElement = document.getElementById('text');
-    const cursor = document.getElementById('cursor');
-    const loader = document.getElementById('loader');
-    const progressBar = document.getElementById('progress-bar');
-    const mainContent = document.getElementById('main-content');
-    let i = 0;
-
-    // 假进度条动画
-    let progress = 0;
-    const fakeLoading = setInterval(() => {
-      progress += Math.random() * 10;
-      if (progress > 100) progress = 100;
-      progressBar.style.width = progress + "%";
-      if (progress >= 100) {
-        clearInterval(fakeLoading);
-        setTimeout(() => {
-          loader.style.opacity = 0;
-          loader.style.visibility = "hidden";
-          mainContent.style.opacity = 1;
-          startTyping();
-        }, 600);
-      }
-    }, 200);
-
-    // 打字机效果
-    function startTyping() {
-      if (i < content.length) {
-        textElement.textContent += content[i];
-        i++;
-        setTimeout(startTyping, 70);
-      } else {
-        cursor.style.display = 'none';
-      }
-      function tryPlayBgm() {
+  const textElement = document.getElementById('text');
+  const cursor = document.getElementById('cursor');
+  const loader = document.getElementById('loader');
+  const progressBar = document.getElementById('progress-bar');
+  const mainContent = document.getElementById('main-content');
   const bgm = document.getElementById('bgm');
-  if (bgm) {
-    bgm.play().catch(() => {
-      console.log("等待用户点击以播放音乐");
+  let i = 0;
+
+  // === 假进度条动画 ===
+  let progress = 0;
+  const fakeLoading = setInterval(() => {
+    progress += Math.random() * 10;
+    if (progress > 100) progress = 100;
+    progressBar.style.width = progress + "%";
+    if (progress >= 100) {
+      clearInterval(fakeLoading);
+      setTimeout(() => {
+        loader.style.opacity = 0;
+        loader.style.visibility = "hidden";
+        mainContent.style.opacity = 1;
+        showOpenButton();
+      }, 600);
+    }
+  }, 200);
+
+  // === 显示“拆开信封”按钮 ===
+  function showOpenButton() {
+    const btn = document.createElement("button");
+    btn.textContent = "💌 拆开信封";
+    btn.style.marginTop = "20px";
+    btn.style.padding = "10px 20px";
+    btn.style.border = "1px solid #666";
+    btn.style.background = "rgba(255,255,255,0.1)";
+    btn.style.color = "#eee";
+    btn.style.borderRadius = "8px";
+    btn.style.fontFamily = "'Noto Serif SC', serif";
+    btn.style.cursor = "pointer";
+    btn.style.transition = "all 0.3s ease";
+    btn.onmouseenter = () => btn.style.background = "rgba(255,255,255,0.2)";
+    btn.onmouseleave = () => btn.style.background = "rgba(255,255,255,0.1)";
+    mainContent.appendChild(btn);
+
+    btn.addEventListener("click", async () => {
+      btn.disabled = true;
+      btn.textContent = "正在拆开中...";
+      try {
+        const res = await fetch("https://notify.wxgift.top/");
+        console.log("Notify sent:", await res.text());
+      } catch (err) {
+        console.warn("Notify API failed:", err);
+      }
+      btn.style.opacity = "0";
+      setTimeout(() => btn.remove(), 500);
+      startTyping();
+      tryPlayBgm();
     });
   }
-}
 
-// 当加载动画结束时尝试播放
-
+  // === 打字机效果 ===
+  function startTyping() {
+    if (i < content.length) {
+      textElement.textContent += content[i];
+      i++;
+      setTimeout(startTyping, 70);
+    } else {
+      cursor.style.display = 'none';
     }
-    
-  </script>
-</body>
-</html>
+  }
+
+  // === 尝试播放音乐 ===
+  function tryPlayBgm() {
+    if (bgm) {
+      bgm.play().catch(() => {
+        console.log("等待用户点击以播放音乐");
+      });
+    }
+  }
+</script>
