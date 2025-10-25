@@ -92,6 +92,7 @@
       position: relative;
       display: inline-block;
       word-break: break-word;
+      min-height: 8em;
     }
 
     .cursor {
@@ -109,21 +110,29 @@
       25%, 75% { opacity: 0; }
     }
 
+    /* === 按钮样式 === */
     #openBtn {
+      display: none;
       margin-top: 25px;
-      background: #444;
-      border: 1px solid #777;
+      background: linear-gradient(90deg, #777, #ccc);
+      border: none;
       border-radius: 8px;
-      color: #fff;
+      color: #111;
       font-size: 1em;
-      padding: 10px 20px;
+      padding: 10px 22px;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.25s ease;
+      font-family: "Noto Serif SC", serif;
     }
 
-    #openBtn:hover {
-      background: #666;
-      box-shadow: 0 0 8px #999;
+    #openBtn:hover:not(:disabled) {
+      transform: scale(1.05);
+      box-shadow: 0 0 10px #bbb;
+    }
+
+    #openBtn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
     }
   </style>
 </head>
@@ -131,7 +140,7 @@
 <body>
   <!-- 加载动画 -->
   <div id="loader">
-    <div class="loader-title">正在准备魔法信封中...</div>
+    <div class="loader-title">喵喵正在准备魔法中...</div>
     <div class="progress-container">
       <div class="progress-bar" id="progress-bar"></div>
     </div>
@@ -175,23 +184,12 @@
           loader.style.opacity = 0;
           loader.style.visibility = "hidden";
           mainContent.style.opacity = 1;
-          startTyping();
+          openBtn.style.display = "inline-block"; // ✅ 加载完成后显示按钮
         }, 600);
       }
     }, 200);
 
-    // === 打字机效果 ===
-    function startTyping() {
-      if (i < content.length) {
-        textElement.textContent += content[i];
-        i++;
-        setTimeout(startTyping, 70);
-      } else {
-        cursor.style.display = 'none';
-      }
-    }
-
-    // === 点击按钮触发推送 ===
+    // === 点击按钮触发推送 + 动画 ===
     openBtn.addEventListener('click', () => {
       const token = Math.random().toString(36).slice(2);
       fetch("https://notify.wxgift.top/?t=" + token)
@@ -202,7 +200,7 @@
       tryPlayBgm();
       openBtn.textContent = "💌 已拆开";
       openBtn.disabled = true;
-      openBtn.style.opacity = 0.6;
+      startTyping();
     });
 
     // === 音乐播放 ===
@@ -212,6 +210,17 @@
         bgm.play().catch(() => {
           console.log("等待用户点击以播放音乐");
         });
+      }
+    }
+
+    // === 打字机效果 ===
+    function startTyping() {
+      if (i < content.length) {
+        textElement.textContent += content[i];
+        i++;
+        setTimeout(startTyping, 70);
+      } else {
+        cursor.style.display = 'none';
       }
     }
   </script>
