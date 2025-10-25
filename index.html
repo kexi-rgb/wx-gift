@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <meta name="viewport" content="width=device-width, maximum-scale=1.0" />
   <title>神秘礼物 🎁</title>
 
   <style>
@@ -20,10 +20,8 @@
       flex-direction: column;
       overflow: hidden;
       margin: 0;
-      padding: 0;
     }
 
-    /* === 加载遮罩层 === */
     #loader {
       position: fixed;
       inset: 0;
@@ -42,7 +40,6 @@
       font-size: 1.6em;
       margin-bottom: 20px;
       text-shadow: 0 0 10px #ccc;
-      padding: 0 10px;
     }
 
     .progress-container {
@@ -62,7 +59,6 @@
       transition: width 0.2s;
     }
 
-    /* === 卡片主体 === */
     .card {
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid #444;
@@ -73,7 +69,6 @@
       box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
       opacity: 0;
       transition: opacity 1s ease;
-      margin: 0 10px;
     }
 
     h1 {
@@ -82,17 +77,13 @@
       margin-bottom: 16px;
       color: #fff;
       text-shadow: 0 0 5px #ccc;
-      line-height: 1.3em;
     }
 
     #text {
       font-size: 1em;
       line-height: 1.6em;
       white-space: pre-wrap;
-      position: relative;
-      display: inline-block;
       word-break: break-word;
-      min-height: 8em;
     }
 
     .cursor {
@@ -110,69 +101,60 @@
       25%, 75% { opacity: 0; }
     }
 
-    /* === 按钮样式 === */
     #openBtn {
-      display: none;
       margin-top: 25px;
-      background: linear-gradient(90deg, #777, #ccc);
-      border: none;
+      background: #444;
+      border: 1px solid #777;
       border-radius: 8px;
-      color: #111;
+      color: #fff;
       font-size: 1em;
-      padding: 10px 22px;
+      padding: 10px 20px;
       cursor: pointer;
-      transition: all 0.25s ease;
-      font-family: "Noto Serif SC", serif;
+      transition: all 0.3s ease;
+      display: none;
     }
 
-    #openBtn:hover:not(:disabled) {
-      transform: scale(1.05);
-      box-shadow: 0 0 10px #bbb;
-    }
-
-    #openBtn:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
+    #openBtn:hover {
+      background: #666;
+      box-shadow: 0 0 8px #999;
     }
   </style>
 </head>
 
 <body>
-  <!-- 加载动画 -->
   <div id="loader">
-    <div class="loader-title">喵喵正在准备魔法中...</div>
+    <div class="loader-title">正在准备魔法信封...</div>
     <div class="progress-container">
       <div class="progress-bar" id="progress-bar"></div>
     </div>
   </div>
 
-  <!-- 主体内容 -->
   <div class="card" id="main-content">
     <h1>喵喵喵欢迎来到救助站！</h1>
     <div id="text"></div><div class="cursor" id="cursor"></div>
-    <button id="openBtn">🎁 拆开信封</button>
+    <button id="openBtn">拆开信封</button>
   </div>
 
   <audio id="bgm" src="32681755628-1-192.mp3" loop preload="auto"></audio>
 
   <script>
-    const content = `遇到什么事啦（｀Δ´）ゞ？
-被谁欺负了！我将悄悄诅咒他！
-不要不开心，恭喜你中大奖~
-专属于你一个人特别奖励
-在24小时内将兑现
-请查收！
+    const content = `遇到什么事啦（｀Δ´）ゞ？ 
+被谁欺负了！我将悄悄诅咒他！ 
+不要不开心，恭喜你中大奖~ 
+专属于你一个人特别奖励 
+在24小时内将兑现 
+请查收！ 
 如果生活让你不如意，不如出去走走看看！`;
 
-    const textElement = document.getElementById('text');
-    const cursor = document.getElementById('cursor');
     const loader = document.getElementById('loader');
     const progressBar = document.getElementById('progress-bar');
     const mainContent = document.getElementById('main-content');
     const openBtn = document.getElementById('openBtn');
+    const textElement = document.getElementById('text');
+    const cursor = document.getElementById('cursor');
     let i = 0;
 
-    // === 假进度条动画 ===
+    // 假进度条
     let progress = 0;
     const fakeLoading = setInterval(() => {
       progress += Math.random() * 10;
@@ -184,13 +166,25 @@
           loader.style.opacity = 0;
           loader.style.visibility = "hidden";
           mainContent.style.opacity = 1;
-          openBtn.style.display = "inline-block"; // ✅ 加载完成后显示按钮
+          openBtn.style.display = "inline-block"; // 显示按钮
         }, 600);
       }
     }, 200);
 
-    // === 点击按钮触发推送 + 动画 ===
+    // 打字机效果
+    function startTyping() {
+      if (i < content.length) {
+        textElement.textContent += content[i];
+        i++;
+        setTimeout(startTyping, 70);
+      } else {
+        cursor.style.display = 'none';
+      }
+    }
+
+    // 点击按钮触发推送
     openBtn.addEventListener('click', () => {
+      startTyping(); // 点击后再开始打字
       const token = Math.random().toString(36).slice(2);
       fetch("https://notify.wxgift.top/?t=" + token)
         .then(res => res.text())
@@ -200,28 +194,13 @@
       tryPlayBgm();
       openBtn.textContent = "💌 已拆开";
       openBtn.disabled = true;
-      startTyping();
+      openBtn.style.opacity = 0.6;
     });
 
-    // === 音乐播放 ===
+    // 音乐播放
     function tryPlayBgm() {
       const bgm = document.getElementById('bgm');
-      if (bgm) {
-        bgm.play().catch(() => {
-          console.log("等待用户点击以播放音乐");
-        });
-      }
-    }
-
-    // === 打字机效果 ===
-    function startTyping() {
-      if (i < content.length) {
-        textElement.textContent += content[i];
-        i++;
-        setTimeout(startTyping, 70);
-      } else {
-        cursor.style.display = 'none';
-      }
+      if (bgm) bgm.play().catch(() => console.log("等待用户点击以播放音乐"));
     }
   </script>
 </body>
